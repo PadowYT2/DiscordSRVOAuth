@@ -7,7 +7,7 @@ Allow players to link their Discord account via Discord OAuth2
 <br />
 
 <div align="center">
-<a href="https://modrinth.com/plugin/discordsrvoauth"><img height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
+<a href="https://modrinth.com/plugin/DiscordSRVOAuth"><img height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
 <a href="https://hangar.papermc.io/PadowYT2/DiscordSRVOAuth"><img height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg"></a>
 <a href="https://github.com/PadowYT2/DiscordSRVOAuth/releases"><img height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg"></a>
 </div>
