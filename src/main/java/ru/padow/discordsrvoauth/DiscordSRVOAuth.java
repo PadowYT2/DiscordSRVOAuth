@@ -59,7 +59,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         loadConfig();
         startServer();
 
-        if (config.getBoolean("bstats")) new Metrics(this, 22313);
+        if (config.getBoolean("bstats")) new Metrics(this, 22358);
 
         Logger logger = getLogger();
 
