@@ -4,6 +4,7 @@ Allow players to link their Discord account via Discord OAuth2
 <a href="https://discord.gg/7FDdBCbAcq"><img height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/social/discord-singular_vector.svg"></a>
 
 <br />
+<br />
 
 <div align="center">
 <a href="https://modrinth.com/plugin/discordsrvoauth"><img height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
