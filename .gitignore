@@ -1,0 +1,24 @@
+# Gradle
+/.gradle/
+/build/
+
+# IntelliJ
+.idea/
+*.iml
+# Eclipse
+/.settings
+/.classpath
+/.project
+# Visual Studio Code
+/.vscode/
+
+# NMS jar
+craftbukkit.jar
+
+# run-paper gradle plugin
+run/
+
+# custom paths
+build.sh
+test/
+bin/

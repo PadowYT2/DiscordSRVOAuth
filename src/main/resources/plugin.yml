@@ -1,0 +1,17 @@
+name: DiscordSRVOAuth
+version: ${version}
+description: Allow players to link their Discord account via Discord OAuth2
+author: PadowYT2
+api-version: 1.13
+main: ru.padow.discordsrvoauth.DiscordSRVOAuth
+folia-supported: true
+depend: [DiscordSRV]
+
+commands:
+  discordsrvoauth:
+    description: DiscordSRVOAuth commands
+
+permissions:
+  discordsrvoauth.reload:
+    description: whether the player can reload the configuration
+    default: op

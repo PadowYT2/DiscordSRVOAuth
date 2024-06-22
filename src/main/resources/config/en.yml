@@ -1,0 +1,27 @@
+# MiniMessage will only work on PaperMC 1.18.2+ (https://webui.advntr.dev)
+# On SpigotMC and/or Minecraft 1.18.1 and lower, legacy codes must be used
+#
+# Placeholders
+# {JOIN} - {https}://{url}:{port}/{link_route}?code=xxxx
+# {KICK} - {url}:{port}/{link_route}?code=xxxx
+#
+# You can also use <click:open_url:'{JOIN}'>click here</click>
+# if you are not getting kicked from the server on join (only with MiniMessage)
+kick_message: |
+  <gray>To play, you need to link your <color:#5865f2>Discord<gray> account.
+
+  <gray>Please go to <green>{KICK} <gray>to link your account.
+
+# Enable if you have a reverse proxy for the url
+https: false
+url: example.com
+port: 8080
+
+# This route will be used to use the Discord OAuth2 (ex. http://example.com:8080/link?code=xxxx)
+link_route: link
+
+# You can find these values in your Discord application's settings
+client_id: 000000000000000000
+client_secret: ""
+
+bstats: true
