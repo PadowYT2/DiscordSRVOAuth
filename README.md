@@ -15,7 +15,7 @@ Allow players to link their Discord account via Discord OAuth2
 ## Usage
 
 1. Download the plugin
-2. Upload the plugin to your Minecraft Server (make sure it has DiscordSRV)
+2. Upload the plugin to your Minecraft Server (make sure it has [DiscordSRV](https://discordsrv.com))
 3. Make sure the port is open and not used
 4. Make sure the URL is valid
 
