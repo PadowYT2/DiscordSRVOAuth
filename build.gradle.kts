@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "ru.padow"
-version = "1.0.1"
+version = "1.0.2"
 
 java {
     sourceCompatibility = JavaVersion.toVersion(11)
