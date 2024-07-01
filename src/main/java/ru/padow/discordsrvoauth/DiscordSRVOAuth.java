@@ -114,6 +114,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                                     + ChatColor.GRAY
                                     + "v"
                                     + getDescription().getVersion()
+                                    + "\n"
                                     + ChatColor.GREEN
                                     + "Made by "
                                     + ChatColor.DARK_BLUE
