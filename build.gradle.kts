@@ -60,8 +60,4 @@ tasks {
 
         exclude("META-INF/maven/**")
     }
-
-    build {
-        dependsOn(shadowJar)
-    }
 }
