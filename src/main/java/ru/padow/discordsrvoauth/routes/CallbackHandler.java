@@ -107,6 +107,7 @@ public class CallbackHandler implements HttpHandler {
         exchange.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes());
+            os.close();
         }
     }
 }
