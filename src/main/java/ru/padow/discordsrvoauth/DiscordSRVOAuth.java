@@ -23,6 +23,7 @@ import com.sun.net.httpserver.HttpServer;
 import github.scarsz.configuralize.DynamicConfig;
 import github.scarsz.configuralize.ParseException;
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -147,12 +148,14 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(AsyncPlayerPreLoginEvent event) {
+        AccountLinkManager accountLinkManager = DiscordSRV.getPlugin().getAccountLinkManager();
+        if (accountLinkManager == null) return;
+
         UUID playerUuid = event.getUniqueId();
-        String discordId =
-                DiscordSRV.getPlugin().getAccountLinkManager().getDiscordIdBypassCache(playerUuid);
+        String discordId = accountLinkManager.getDiscordIdBypassCache(playerUuid);
 
         if (discordId == null) {
-            String code = DiscordSRV.getPlugin().getAccountLinkManager().generateCode(playerUuid);
+            String code = accountLinkManager.generateCode(playerUuid);
             String route = "/" + config.getString("link_route") + "?code=" + code;
             String url =
                     config.getBoolean("https")
