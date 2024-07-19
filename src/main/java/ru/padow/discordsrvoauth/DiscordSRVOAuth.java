@@ -25,7 +25,6 @@ import github.scarsz.configuralize.ParseException;
 import github.scarsz.discordsrv.DiscordSRV;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.ChatColor;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.command.Command;
@@ -109,16 +108,9 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                             MiniMessage.miniMessage().deserialize("\n" + message + "\n"));
                 } catch (Exception e) {
                     sender.sendMessage(
-                            ChatColor.GOLD
-                                    + "DiscordSRVOAuth"
-                                    + ChatColor.GRAY
-                                    + "v"
+                            "§6DiscordSRVOAuth §7v"
                                     + getDescription().getVersion()
-                                    + "\n"
-                                    + ChatColor.GREEN
-                                    + "Made by "
-                                    + ChatColor.DARK_BLUE
-                                    + "PadowYT2");
+                                    + "\n§aMade by §1PadowYT2");
                 }
 
                 return true;
@@ -131,7 +123,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                 loadConfig();
                 startServer();
 
-                sender.sendMessage(ChatColor.GREEN + "Reloaded the plugin");
+                sender.sendMessage("§aReloaded the plugin");
 
                 return true;
             }
