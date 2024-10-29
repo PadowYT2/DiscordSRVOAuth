@@ -109,5 +109,7 @@ public class CallbackHandler implements HttpHandler {
             os.write(response.getBytes());
             os.close();
         }
+
+        exchange.close();
     }
 }

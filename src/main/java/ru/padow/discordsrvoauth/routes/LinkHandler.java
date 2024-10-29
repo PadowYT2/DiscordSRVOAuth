@@ -74,5 +74,7 @@ public class LinkHandler implements HttpHandler {
 
         exchange.getResponseHeaders().set("Location", url);
         exchange.sendResponseHeaders(302, -1);
+
+        exchange.close();
     }
 }
