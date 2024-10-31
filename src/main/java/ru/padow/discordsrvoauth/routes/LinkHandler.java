@@ -42,6 +42,8 @@ public class LinkHandler implements HttpHandler {
         String query = exchange.getRequestURI().getQuery();
         if (query == null || !query.contains("code")) {
             exchange.sendResponseHeaders(400, -1);
+            exchange.close();
+
             return;
         }
 
@@ -53,6 +55,8 @@ public class LinkHandler implements HttpHandler {
                         .getLinkingCodes()
                         .containsKey(code)) {
             exchange.sendResponseHeaders(400, -1);
+            exchange.close();
+
             return;
         }
 
@@ -74,7 +78,6 @@ public class LinkHandler implements HttpHandler {
 
         exchange.getResponseHeaders().set("Location", url);
         exchange.sendResponseHeaders(302, -1);
-
         exchange.close();
     }
 }

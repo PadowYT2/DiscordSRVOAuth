@@ -46,6 +46,8 @@ public class CallbackHandler implements HttpHandler {
         String query = exchange.getRequestURI().getQuery();
         if (query == null || !query.contains("code") || !query.contains("state")) {
             exchange.sendResponseHeaders(400, -1);
+            exchange.close();
+
             return;
         }
 
@@ -59,6 +61,8 @@ public class CallbackHandler implements HttpHandler {
                         .getLinkingCodes()
                         .containsKey(state)) {
             exchange.sendResponseHeaders(403, -1);
+            exchange.close();
+
             return;
         }
 
@@ -94,6 +98,8 @@ public class CallbackHandler implements HttpHandler {
         String id = userJson.get("id").getAsString();
         if (id == null || id.isEmpty()) {
             exchange.sendResponseHeaders(400, -1);
+            exchange.close();
+
             return;
         }
 
