@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "ru.padow"
-version = "1.0.3"
+version = "1.0.4"
 
 java {
     sourceCompatibility = JavaVersion.toVersion(11)
@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
-    compileOnly("com.discordsrv:discordsrv:1.27.0")
+    compileOnly("com.discordsrv:discordsrv:1.28.1")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     api("github.scarsz:configuralize:1.3.2") {
         exclude(module = "json-simple")
