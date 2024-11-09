@@ -197,7 +197,12 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
             System.setProperty("sun.net.httpserver.maxRspTime", "10000");
 
             server = HttpServer.create(new InetSocketAddress("0.0.0.0", config.getInt("port")), 0);
-            server.createContext("/", exchange -> exchange.sendResponseHeaders(404, -1));
+            server.createContext(
+                    "/",
+                    exchange -> {
+                        exchange.sendResponseHeaders(404, -1);
+                        exchange.close();
+                    });
             server.createContext("/" + config.getString("link_route"), new LinkHandler(config));
             server.createContext("/callback", new CallbackHandler(config));
             server.setExecutor(null);
