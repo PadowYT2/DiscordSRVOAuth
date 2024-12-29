@@ -28,6 +28,7 @@ import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -57,7 +58,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         config.addSource(DiscordSRVOAuth.class, "config", new File(getDataFolder(), "config.yml"));
 
         loadConfig();
-        startServer();
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> startServer());
 
         if (config.getBoolean("bstats")) new Metrics(this, 22358);
 
