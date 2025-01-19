@@ -46,11 +46,14 @@ import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     private HttpServer server;
     private DynamicConfig config;
+    private ExecutorService executor;
 
     @Override
     public void onEnable() {
@@ -78,7 +81,8 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        server.stop(1);
+        if (executor != null) executor.shutdown();
+        if (server != null) server.stop(1);
     }
 
     @SuppressWarnings("deprecation")
@@ -197,7 +201,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
             System.setProperty("sun.net.httpserver.maxReqTime", "10000");
             System.setProperty("sun.net.httpserver.maxRspTime", "10000");
 
-            server = HttpServer.create(new InetSocketAddress("0.0.0.0", config.getInt("port")), 0);
+            server = HttpServer.create(new InetSocketAddress("0.0.0.0", config.getInt("port")), 50);
             server.createContext(
                     "/",
                     exchange -> {
@@ -206,7 +210,9 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                     });
             server.createContext("/" + config.getString("link_route"), new LinkHandler(config));
             server.createContext("/callback", new CallbackHandler(config));
-            server.setExecutor(null);
+
+            executor = Executors.newCachedThreadPool();
+            server.setExecutor(executor);
             server.start();
         } catch (IOException e) {
             e.printStackTrace();
