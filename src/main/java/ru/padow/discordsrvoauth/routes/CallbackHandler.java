@@ -86,13 +86,13 @@ public class CallbackHandler implements HttpHandler {
                                                         + "/callback");
                             }
                         });
-        String userResponse =
-                Utils.get(
-                        "https://discord.com/api/users/@me",
-                        JsonParser.parseString(tokenResponse)
-                                .getAsJsonObject()
-                                .get("access_token")
-                                .getAsString());
+        String accessToken =
+                JsonParser.parseString(tokenResponse)
+                        .getAsJsonObject()
+                        .get("access_token")
+                        .getAsString();
+
+        String userResponse = Utils.get("https://discord.com/api/users/@me", accessToken);
         JsonObject userJson = JsonParser.parseString(userResponse).getAsJsonObject();
 
         String id = userJson.get("id").getAsString();
@@ -101,6 +101,13 @@ public class CallbackHandler implements HttpHandler {
             exchange.close();
 
             return;
+        }
+
+        String token = config.getString("bot_token");
+        if (token != null && !token.isEmpty()) {
+            Utils.put(
+                    "https://discord.com/api/guilds/" + config.get("guild_id") + "/members/" + id,
+                    Map.of("access_token", accessToken));
         }
 
         String response =

@@ -31,6 +31,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("com.discordsrv:discordsrv:1.28.1")
     implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     api("github.scarsz:configuralize:1.3.2") {
         exclude(module = "json-simple")
         exclude(module = "snakeyaml")
@@ -52,6 +53,7 @@ tasks {
         }
 
         relocate("org.bstats", "ru.padow.discordsrvoauth.bstats")
+        relocate("com.squareup.okhttp3", "ru.padow.discordsrvoauth.okhttp3")
 
         exclude("META-INF/maven/**")
     }

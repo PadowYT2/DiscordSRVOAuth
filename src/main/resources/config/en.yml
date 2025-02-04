@@ -12,7 +12,7 @@ kick_message: |
 
   <gray>Please go to <green>{KICK} <gray>to link your account.
 
-# Enable if you have a reverse proxy for the url
+# Enable HTTPS if you have a reverse proxy for the url
 https: false
 url: example.com
 port: 8080
@@ -23,5 +23,9 @@ link_route: link
 # You can find these values in your Discord application's settings
 client_id: 000000000000000000
 client_secret: ""
+
+# If you want to have the user to join your guild, fill these values
+bot_token: ""
+guild_id: 000000000000000000
 
 bstats: true

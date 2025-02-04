@@ -18,7 +18,13 @@
 
 package ru.padow.discordsrvoauth;
 
-import github.scarsz.discordsrv.dependencies.okhttp3.*;
+import com.google.gson.Gson;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -45,9 +51,21 @@ public class Utils {
 
         RequestBody body =
                 RequestBody.create(
-                        MediaType.get("application/x-www-form-urlencoded; charset=UTF-8"),
-                        parameters);
+                        parameters,
+                        MediaType.get("application/x-www-form-urlencoded; charset=UTF-8"));
         Request request = new Request.Builder().url(url).post(body).build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
+
+    public static String put(String url, Map<String, String> params) throws IOException {
+        RequestBody body =
+                RequestBody.create(
+                        new Gson().toJson(params),
+                        MediaType.get("application/json; charset=UTF-8"));
+        Request request = new Request.Builder().url(url).put(body).build();
 
         try (Response response = client.newCall(request).execute()) {
             return response.body().string();

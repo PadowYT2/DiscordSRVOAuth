@@ -60,6 +60,7 @@ public class LinkHandler implements HttpHandler {
             return;
         }
 
+        String token = config.getString("bot_token");
         String redirect_uri =
                 config.getBoolean("https")
                         ? "https://" + config.getString("url") + "/callback"
@@ -73,7 +74,9 @@ public class LinkHandler implements HttpHandler {
                         + config.getString("client_id")
                         + "&redirect_uri="
                         + URLEncoder.encode(redirect_uri, StandardCharsets.UTF_8)
-                        + "&response_type=code&scope=identify&state="
+                        + "&response_type=code&scope=identify"
+                        + ((token != null && !token.isEmpty()) ? "+guilds.join" : "")
+                        + "&state="
                         + code;
 
         exchange.getResponseHeaders().set("Location", url);
