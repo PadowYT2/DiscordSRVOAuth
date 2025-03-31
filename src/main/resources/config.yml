@@ -20,7 +20,6 @@ kick_message: |
 
   <gray>Please go to <green>{KICK} <gray>to link your account.
 
-
 # You can find these values in your Discord application's settings
 client_id: 000000000000000000
 client_secret: ""
