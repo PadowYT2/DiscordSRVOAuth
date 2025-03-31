@@ -1,3 +1,11 @@
+# Enable HTTPS if you have a reverse proxy for the url
+https: false
+url: example.com
+port: 8082
+
+# This route will be used to use the Discord OAuth2 (ex. http://example.com:8080/link?code=xxxx)
+link_route: link
+
 # MiniMessage will only work on PaperMC 1.18.2+ (https://webui.advntr.dev)
 # On SpigotMC and/or Minecraft 1.18.1 and lower, legacy codes must be used
 #
@@ -12,13 +20,6 @@ kick_message: |
 
   <gray>Please go to <green>{KICK} <gray>to link your account.
 
-# Enable HTTPS if you have a reverse proxy for the url
-https: false
-url: example.com
-port: 8080
-
-# This route will be used to use the Discord OAuth2 (ex. http://example.com:8080/link?code=xxxx)
-link_route: link
 
 # You can find these values in your Discord application's settings
 client_id: 000000000000000000
