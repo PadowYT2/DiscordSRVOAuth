@@ -192,18 +192,12 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         if (discordId == null) {
             String code = accountLinkManager.generateCode(playerUuid);
             String route = "/" + config.getString("link_route") + "?code=" + code;
-            String url =
-                    config.getBoolean("https")
-                            ? config.getString("url") + route
-                            : config.getString("url") + ":" + config.getInt("port") + route;
 
             String kickMessage =
                     config.getString("kick_message")
                             .replaceAll("&", "§")
-                            .replace(
-                                    "{JOIN}",
-                                    (config.getBoolean("https") ? "https://" : "http://") + url)
-                            .replace("{KICK}", url);
+                            .replace("{JOIN}", Utils.getBaseURL(config, true) + route)
+                            .replace("{KICK}", Utils.getBaseURL(config, false) + route);
 
             try {
                 Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");

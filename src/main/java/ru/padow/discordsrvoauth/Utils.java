@@ -96,9 +96,9 @@ public class Utils {
                                 pair -> URLDecoder.decode(pair[1], StandardCharsets.UTF_8)));
     }
 
-    public static String getCallbackURL(YamlDocument config) {
-        return config.getBoolean("https")
-                ? "https://" + config.getString("url") + "/callback"
-                : "http://" + config.getString("url") + ":" + config.getInt("port") + "/callback";
+    public static String getBaseURL(YamlDocument config, Boolean protocol) {
+        return (protocol ? (config.getBoolean("https") ? "https://" : "http://") : "")
+                + config.getString("url")
+                + (config.getBoolean("https") ? "" : ":" + config.getInt("port"));
     }
 }
