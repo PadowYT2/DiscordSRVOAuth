@@ -20,10 +20,18 @@ package ru.padow.discordsrvoauth;
 
 import com.sun.net.httpserver.HttpServer;
 
-import github.scarsz.configuralize.DynamicConfig;
-import github.scarsz.configuralize.ParseException;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -52,20 +60,37 @@ import java.util.logging.Logger;
 
 public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     private HttpServer server;
-    private DynamicConfig config;
+
+    @Getter
+    @Accessors(fluent = true)
+    private static YamlDocument config;
+
     private ExecutorService executor;
 
     @Override
     public void onEnable() {
-        config = new DynamicConfig();
-        config.addSource(DiscordSRVOAuth.class, "config", new File(getDataFolder(), "config.yml"));
+        Logger logger = getLogger();
 
-        loadConfig();
+        try {
+            config =
+                    YamlDocument.create(
+                            new File(getDataFolder(), "config.yml"),
+                            getResource("config.yml"),
+                            GeneralSettings.DEFAULT,
+                            LoaderSettings.builder().setAutoUpdate(true).build(),
+                            DumperSettings.DEFAULT,
+                            UpdaterSettings.builder()
+                                    .setVersioning(new BasicVersioning("version"))
+                                    .build());
+
+            if (config.getInt("version") == null) config.update();
+        } catch (IOException e) {
+            logger.severe(e.getMessage());
+        }
+
         Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> startServer());
 
         if (config.getBoolean("bstats")) new Metrics(this, 22358);
-
-        Logger logger = getLogger();
 
         try {
             Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
@@ -126,7 +151,12 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                     && sender.hasPermission("discordsrvoauth.reload")) {
                 server.stop(1);
 
-                loadConfig();
+                try {
+                    config.reload();
+                } catch (IOException e) {
+                    getLogger().severe(e.getMessage());
+                }
+
                 startServer();
 
                 sender.sendMessage("§aReloaded the plugin");
@@ -187,15 +217,6 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         }
     }
 
-    public void loadConfig() {
-        try {
-            config.saveAllDefaults(false);
-            config.loadAll();
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void startServer() {
         try {
             System.setProperty("sun.net.httpserver.maxReqTime", "10000");
@@ -208,8 +229,8 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                         exchange.sendResponseHeaders(404, -1);
                         exchange.close();
                     });
-            server.createContext("/" + config.getString("link_route"), new LinkHandler(config));
-            server.createContext("/callback", new CallbackHandler(config));
+            server.createContext("/" + config.getString("link_route"), new LinkHandler());
+            server.createContext("/callback", new CallbackHandler());
 
             executor = Executors.newCachedThreadPool();
             server.setExecutor(executor);

@@ -29,3 +29,6 @@ bot_token: ""
 guild_id: 000000000000000000
 
 bstats: true
+
+# !!! DO NOT EDIT THIS !!!
+version: 1

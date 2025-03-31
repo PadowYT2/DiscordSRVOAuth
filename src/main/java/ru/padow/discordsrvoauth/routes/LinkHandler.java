@@ -21,9 +21,11 @@ package ru.padow.discordsrvoauth.routes;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import github.scarsz.configuralize.DynamicConfig;
+import dev.dejvokep.boostedyaml.YamlDocument;
+
 import github.scarsz.discordsrv.DiscordSRV;
 
+import ru.padow.discordsrvoauth.DiscordSRVOAuth;
 import ru.padow.discordsrvoauth.Utils;
 
 import java.io.IOException;
@@ -31,11 +33,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class LinkHandler implements HttpHandler {
-    private DynamicConfig config;
-
-    public LinkHandler(DynamicConfig dynamicConfig) {
-        config = dynamicConfig;
-    }
+    private YamlDocument config = DiscordSRVOAuth.config();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

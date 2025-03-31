@@ -21,21 +21,19 @@ license {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://nexus.scarsz.me/content/groups/public/")
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
-    compileOnly("com.discordsrv:discordsrv:1.28.1")
-    implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    api("github.scarsz:configuralize:1.3.2") {
-        exclude(module = "json-simple")
-        exclude(module = "snakeyaml")
-    }
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("com.discordsrv:discordsrv:1.29.0")
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
+    implementation("dev.dejvokep:boosted-yaml:1.3.5")
+    implementation("dev.dejvokep:boosted-yaml-spigot:1.5")
 }
 
 tasks {
@@ -45,16 +43,18 @@ tasks {
         }
     }
 
+    build {
+        dependsOn(shadowJar)
+    }
+
     shadowJar {
+        mergeServiceFiles()
         archiveClassifier.set("")
 
-        minimize {
-            exclude(dependency("github.scarsz:configuralize"))
-        }
-
         relocate("org.bstats", "ru.padow.discordsrvoauth.bstats")
-        relocate("com.squareup.okhttp3", "ru.padow.discordsrvoauth.okhttp3")
+        relocate("dev.dejvokep.boostedyaml", "ru.padow.discordsrvoauth.boostedyaml")
 
+        exclude("META-INF/versions/**")
         exclude("META-INF/maven/**")
     }
 }

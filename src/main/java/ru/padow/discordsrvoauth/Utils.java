@@ -20,25 +20,23 @@ package ru.padow.discordsrvoauth;
 
 import com.google.gson.Gson;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Utils {
-    private static OkHttpClient client = new OkHttpClient();
+    private static final HttpClient client = HttpClient.newHttpClient();
 
-    public static String post(String url, Map<String, String> params) throws IOException {
+    public static String post(String url, Map<String, String> params)
+            throws IOException, InterruptedException {
         String parameters =
                 params.entrySet().stream()
                         .map(
@@ -49,49 +47,50 @@ public class Utils {
                                                         entry.getValue(), StandardCharsets.UTF_8))
                         .collect(Collectors.joining("&"));
 
-        RequestBody body =
-                RequestBody.create(
-                        parameters,
-                        MediaType.get("application/x-www-form-urlencoded; charset=UTF-8"));
-        Request request = new Request.Builder().url(url).post(body).build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-    public static String put(String url, Map<String, String> params) throws IOException {
-        RequestBody body =
-                RequestBody.create(
-                        new Gson().toJson(params),
-                        MediaType.get("application/json; charset=UTF-8"));
-        Request request = new Request.Builder().url(url).put(body).build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-    public static String get(String url, String accessToken) throws IOException {
-        Request request =
-                new Request.Builder()
-                        .url(url)
-                        .addHeader("Authorization", "Bearer " + accessToken)
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                        .POST(HttpRequest.BodyPublishers.ofString(parameters))
                         .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+
+    public static String put(String url, Map<String, String> params)
+            throws IOException, InterruptedException {
+        String json = new Gson().toJson(params);
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Content-Type", "application/json; charset=UTF-8")
+                        .PUT(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+
+    public static String get(String url, String accessToken)
+            throws IOException, InterruptedException {
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Authorization", "Bearer " + accessToken)
+                        .GET()
+                        .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
     public static Map<String, String> queryToMap(String query) {
-        return query != null
-                ? Arrays.stream(query.split("&"))
-                        .map(param -> param.split("="))
-                        .collect(
-                                Collectors.toMap(
-                                        pair -> URLDecoder.decode(pair[0], StandardCharsets.UTF_8),
-                                        pair -> URLDecoder.decode(pair[1], StandardCharsets.UTF_8)))
-                : new HashMap<>();
+        return Arrays.stream(query.split("&"))
+                .map(param -> param.split("="))
+                .collect(
+                        Collectors.toMap(
+                                pair -> URLDecoder.decode(pair[0], StandardCharsets.UTF_8),
+                                pair -> URLDecoder.decode(pair[1], StandardCharsets.UTF_8)));
     }
 }

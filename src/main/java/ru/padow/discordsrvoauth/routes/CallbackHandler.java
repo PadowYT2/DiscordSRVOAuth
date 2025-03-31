@@ -23,9 +23,11 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import github.scarsz.configuralize.DynamicConfig;
+import dev.dejvokep.boostedyaml.YamlDocument;
+
 import github.scarsz.discordsrv.DiscordSRV;
 
+import ru.padow.discordsrvoauth.DiscordSRVOAuth;
 import ru.padow.discordsrvoauth.Utils;
 
 import java.io.IOException;
@@ -35,11 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CallbackHandler implements HttpHandler {
-    private DynamicConfig config;
-
-    public CallbackHandler(DynamicConfig dynamicConfig) {
-        config = dynamicConfig;
-    }
+    private YamlDocument config = DiscordSRVOAuth.config();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -66,33 +64,46 @@ public class CallbackHandler implements HttpHandler {
             return;
         }
 
-        String tokenResponse =
-                Utils.post(
-                        "https://discord.com/api/oauth2/token",
-                        new HashMap<String, String>() {
-                            {
-                                put("client_id", config.getString("client_id"));
-                                put("client_secret", config.getString("client_secret"));
-                                put("grant_type", "authorization_code");
-                                put("code", code);
-                                put(
-                                        "redirect_uri",
-                                        config.getBoolean("https")
-                                                ? "https://" + config.getString("url") + "/callback"
-                                                : "http://"
-                                                        + config.getString("url")
-                                                        + ":"
-                                                        + config.getInt("port")
-                                                        + "/callback");
-                            }
-                        });
+        String tokenResponse = null;
+        try {
+            tokenResponse =
+                    Utils.post(
+                            "https://discord.com/api/oauth2/token",
+                            new HashMap<String, String>() {
+                                {
+                                    put("client_id", config.getString("client_id"));
+                                    put("client_secret", config.getString("client_secret"));
+                                    put("grant_type", "authorization_code");
+                                    put("code", code);
+                                    put(
+                                            "redirect_uri",
+                                            config.getBoolean("https")
+                                                    ? "https://"
+                                                            + config.getString("url")
+                                                            + "/callback"
+                                                    : "http://"
+                                                            + config.getString("url")
+                                                            + ":"
+                                                            + config.getInt("port")
+                                                            + "/callback");
+                                }
+                            });
+        } catch (InterruptedException e) {
+            // NO-OP
+        }
+
         String accessToken =
                 JsonParser.parseString(tokenResponse)
                         .getAsJsonObject()
                         .get("access_token")
                         .getAsString();
 
-        String userResponse = Utils.get("https://discord.com/api/users/@me", accessToken);
+        String userResponse = null;
+        try {
+            userResponse = Utils.get("https://discord.com/api/users/@me", accessToken);
+        } catch (InterruptedException e) {
+            // NO-OP
+        }
         JsonObject userJson = JsonParser.parseString(userResponse).getAsJsonObject();
 
         String id = userJson.get("id").getAsString();
@@ -105,9 +116,16 @@ public class CallbackHandler implements HttpHandler {
 
         String token = config.getString("bot_token");
         if (token != null && !token.isEmpty()) {
-            Utils.put(
-                    "https://discord.com/api/guilds/" + config.get("guild_id") + "/members/" + id,
-                    Map.of("access_token", accessToken));
+            try {
+                Utils.put(
+                        "https://discord.com/api/guilds/"
+                                + config.get("guild_id")
+                                + "/members/"
+                                + id,
+                        Map.of("access_token", accessToken));
+            } catch (InterruptedException e) {
+                // NO-OP
+            }
         }
 
         String response =
