@@ -75,17 +75,7 @@ public class CallbackHandler implements HttpHandler {
                                     put("client_secret", config.getString("client_secret"));
                                     put("grant_type", "authorization_code");
                                     put("code", code);
-                                    put(
-                                            "redirect_uri",
-                                            config.getBoolean("https")
-                                                    ? "https://"
-                                                            + config.getString("url")
-                                                            + "/callback"
-                                                    : "http://"
-                                                            + config.getString("url")
-                                                            + ":"
-                                                            + config.getInt("port")
-                                                            + "/callback");
+                                    put("redirect_uri", Utils.getCallbackURL(config));
                                 }
                             });
         } catch (InterruptedException e) {

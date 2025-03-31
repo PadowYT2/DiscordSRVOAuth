@@ -85,7 +85,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
             if (config.getInt("version") == null) config.update();
         } catch (IOException e) {
-            logger.severe(e.getMessage());
+            e.printStackTrace();
         }
 
         Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> startServer());
@@ -149,7 +149,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
             if (args[0].equalsIgnoreCase("reload")
                     && sender.hasPermission("discordsrvoauth.reload")) {
-                server.stop(1);
+                if (server != null) server.stop(1);
 
                 try {
                     config.reload();

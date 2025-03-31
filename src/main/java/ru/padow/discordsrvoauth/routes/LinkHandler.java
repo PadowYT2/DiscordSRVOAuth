@@ -59,14 +59,7 @@ public class LinkHandler implements HttpHandler {
         }
 
         String token = config.getString("bot_token");
-        String redirect_uri =
-                config.getBoolean("https")
-                        ? "https://" + config.getString("url") + "/callback"
-                        : "http://"
-                                + config.getString("url")
-                                + ":"
-                                + config.getInt("port")
-                                + "/callback";
+        String redirect_uri = Utils.getCallbackURL(config);
         String url =
                 "https://discord.com/api/oauth2/authorize?client_id="
                         + config.getString("client_id")
