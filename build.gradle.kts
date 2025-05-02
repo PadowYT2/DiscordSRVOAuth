@@ -53,6 +53,7 @@ tasks {
         relocate("org.bstats", "ru.padow.discordsrvoauth.bstats")
         relocate("dev.dejvokep.boostedyaml", "ru.padow.discordsrvoauth.boostedyaml")
 
+        exclude("LICENSE")
         exclude("META-INF/versions/**")
         exclude("META-INF/maven/**")
     }
