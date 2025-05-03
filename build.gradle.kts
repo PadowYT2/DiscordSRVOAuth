@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "9.0.0-beta11"
+    id("com.gradleup.shadow") version "9.0.0-beta13"
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
@@ -23,6 +23,7 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://nexus.scarsz.me/content/groups/public/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -33,6 +34,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("dev.dejvokep:boosted-yaml:1.3.5")
     implementation("dev.dejvokep:boosted-yaml-spigot:1.5")
+    implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
 }
 
 tasks {
@@ -50,8 +52,9 @@ tasks {
         mergeServiceFiles()
         archiveClassifier.set("")
 
-        relocate("org.bstats", "ru.padow.discordsrvoauth.bstats")
-        relocate("dev.dejvokep.boostedyaml", "ru.padow.discordsrvoauth.boostedyaml")
+        relocate("org.bstats", "ru.padow.discordsrvoauth.relocated.bstats")
+        relocate("dev.dejvokep.boostedyaml", "ru.padow.discordsrvoauth.relocated.boostedyaml")
+        relocate("com.tcoded.folialib", "ru.padow.discordsrvoauth.relocated.folialib")
 
         exclude("LICENSE")
         exclude("META-INF/versions/**")

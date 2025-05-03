@@ -19,6 +19,7 @@
 package ru.padow.discordsrvoauth;
 
 import com.sun.net.httpserver.HttpServer;
+import com.tcoded.folialib.FoliaLib;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -36,7 +37,6 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,17 +59,19 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class DiscordSRVOAuth extends JavaPlugin implements Listener {
-    private HttpServer server;
-
     @Getter
     @Accessors(fluent = true)
     private static YamlDocument config;
 
+    private FoliaLib foliaLib;
+    private HttpServer server;
     private ExecutorService executor;
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
         Logger logger = getLogger();
+        foliaLib = new FoliaLib(this);
 
         try {
             config =
@@ -88,7 +90,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
 
-        Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> startServer());
+        foliaLib.getScheduler().runAsync(task -> startServer());
 
         if (config.getBoolean("bstats")) new Metrics(this, 22358);
 
@@ -106,8 +108,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        if (executor != null) executor.shutdown();
-        if (server != null) server.stop(1);
+        stopServer();
     }
 
     @SuppressWarnings("deprecation")
@@ -157,7 +158,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                     getLogger().severe(e.getMessage());
                 }
 
-                startServer();
+                foliaLib.getScheduler().runAsync(task -> startServer());
 
                 sender.sendMessage("§aReloaded the plugin");
 
@@ -211,7 +212,11 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         }
     }
 
-    public void startServer() {
+    private void startServer() {
+        stopServer();
+
+        if (config.getBoolean("disable_webserver")) return;
+
         try {
             System.setProperty("sun.net.httpserver.maxReqTime", "10000");
             System.setProperty("sun.net.httpserver.maxRspTime", "10000");
@@ -232,5 +237,10 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void stopServer() {
+        if (executor != null) executor.shutdown();
+        if (server != null) server.stop(1);
     }
 }

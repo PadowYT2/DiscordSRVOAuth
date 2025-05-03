@@ -28,6 +28,10 @@ client_secret: ""
 bot_token: ""
 guild_id: 000000000000000000
 
+# If you have DiscordSRVOAuth setup on an another server and you are
+# actively syncing DiscordSRV users, you should disable the webserver
+disable_webserver: false
+
 bstats: true
 
 # !!! DO NOT EDIT THIS !!!
