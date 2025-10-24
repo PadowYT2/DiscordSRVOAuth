@@ -23,6 +23,7 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://nexus.scarsz.me/content/groups/public/")
+    maven("https://repo.tcoded.com/releases")
     maven("https://jitpack.io")
 }
 
@@ -34,7 +35,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("dev.dejvokep:boosted-yaml:1.3.5")
     implementation("dev.dejvokep:boosted-yaml-spigot:1.5")
-    implementation("com.github.technicallycoded:FoliaLib:main-SNAPSHOT")
+    implementation("com.tcoded:FoliaLib:0.5.1")
 }
 
 tasks {
