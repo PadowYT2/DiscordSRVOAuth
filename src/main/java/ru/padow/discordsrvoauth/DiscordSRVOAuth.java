@@ -207,11 +207,19 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
             String code = accountLinkManager.generateCode(playerUuid);
             String route = "/" + config.getLinkRoute() + "?code=" + code;
 
+            String botName = "Discord Bot";
+            try {
+                botName = DiscordSRV.getPlugin().getMainGuild().getSelfMember().getEffectiveName();
+            } catch (Exception ignored) {
+            }
+
             String kickMessage =
                     config.getKickMessage()
                             .replaceAll("&", "§")
                             .replace("{JOIN}", Utils.getBaseURL(config, true) + route)
-                            .replace("{KICK}", Utils.getBaseURL(config, false) + route);
+                            .replace("{KICK}", Utils.getBaseURL(config, false) + route)
+                            .replace("{CODE}", code)
+                            .replace("{BOT}", botName);
 
             try {
                 Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");

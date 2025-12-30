@@ -44,12 +44,17 @@ public class Config extends OkaeriConfig {
         "\nPlaceholders",
         "{JOIN} - {https}://{url}:{port}/{link_route}?code=xxxx",
         "{KICK} - {url}:{port}/{link_route}?code=xxxx",
+        "{CODE} - the code",
+        "{BOT} - Discord bot's name",
         "\nYou can also use <click:open_url:'{JOIN}'>click here</click>",
         "if you are not getting kicked from the server on join (only with MiniMessage)"
     })
     private String kickMessage =
             "<gray>To play, you need to link your <color:#5865f2>Discord<gray> account.\n\n"
-                    + "<gray>Please go to <green>{KICK} <gray>to link your account.";
+                + "<gray>Please go to <green>{KICK} <gray>to link your account.\n\n"
+                + "<white>OR\n\n"
+                + "<gray>Message the <color:#5865f2>{BOT}<gray> bot directly with code:"
+                + " <yellow>{CODE}";
 
     @Comment("You can find these values in your Discord application's settings")
     private String clientId = "000000000000000000";
