@@ -19,7 +19,8 @@
 package ru.padow.discordsrvoauth;
 
 import com.sun.net.httpserver.HttpServer;
-import com.tcoded.folialib.FoliaLib;
+import com.cjcrafter.foliascheduler.FoliaCompatibility;
+import com.cjcrafter.foliascheduler.ServerImplementation;
 
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.toml.TomlJacksonConfigurer;
@@ -59,7 +60,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     @Accessors(fluent = true)
     private static Config config;
 
-    private FoliaLib foliaLib;
+    private ServerImplementation scheduler;
     private HttpServer server;
     private ExecutorService executor;
 
@@ -67,7 +68,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Logger logger = getLogger();
-        foliaLib = new FoliaLib(this);
+        scheduler = new FoliaCompatibility(this).getServerImplementation();
 
         File toml = new File(getDataFolder(), "config.toml");
         File yaml = new File(getDataFolder(), "config.yml");
@@ -107,7 +108,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
 
-        foliaLib.getScheduler().runAsync(task -> startServer());
+        scheduler.async().runNow(() -> startServer());
 
         if (config.isBstats()) new Metrics(this, 22358);
 
@@ -171,7 +172,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
                 config.load();
 
-                foliaLib.getScheduler().runAsync(task -> startServer());
+                scheduler.async().runNow(() -> startServer());
 
                 sender.sendMessage("§aReloaded the plugin");
 

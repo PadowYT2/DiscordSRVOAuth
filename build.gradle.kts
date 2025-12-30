@@ -35,7 +35,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:6.0.0-beta.27")
     implementation("eu.okaeri:okaeri-configs-toml-jackson:6.0.0-beta.27")
-    implementation("com.tcoded:FoliaLib:0.5.1")
+    implementation("com.cjcrafter:foliascheduler:0.7.2")
 }
 
 tasks {
@@ -56,7 +56,7 @@ tasks {
         relocate("org.bstats", "ru.padow.discordsrvoauth.relocated.bstats")
         relocate("eu.okaeri", "ru.padow.discordsrvoauth.relocated.okaeri")
         relocate("com.fasterxml", "ru.padow.discordsrvoauth.relocated.fasterxml")
-        relocate("com.tcoded.folialib", "ru.padow.discordsrvoauth.relocated.folialib")
+        relocate("com.cjcrafter.foliascheduler", "ru.padow.discordsrvoauth.relocated.foliascheduler")
 
         exclude("META-INF/**")
 
