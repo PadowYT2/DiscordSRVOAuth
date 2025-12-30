@@ -60,6 +60,8 @@ tasks {
 
         exclude("META-INF/**")
 
-        minimize()
+        minimize {
+            exclude(dependency("com.cjcrafter:foliascheduler:.*"))
+        }
     }
 }
