@@ -23,10 +23,9 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-
 import github.scarsz.discordsrv.DiscordSRV;
 
+import ru.padow.discordsrvoauth.Config;
 import ru.padow.discordsrvoauth.DiscordSRVOAuth;
 import ru.padow.discordsrvoauth.Utils;
 
@@ -37,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CallbackHandler implements HttpHandler {
-    private YamlDocument config = DiscordSRVOAuth.config();
+    private Config config = DiscordSRVOAuth.config();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -71,8 +70,8 @@ public class CallbackHandler implements HttpHandler {
                             "https://discord.com/api/oauth2/token",
                             new HashMap<String, String>() {
                                 {
-                                    put("client_id", config.getString("client_id"));
-                                    put("client_secret", config.getString("client_secret"));
+                                    put("client_id", config.getClientId());
+                                    put("client_secret", config.getClientSecret());
                                     put("grant_type", "authorization_code");
                                     put("code", code);
                                     put(
@@ -106,14 +105,11 @@ public class CallbackHandler implements HttpHandler {
             return;
         }
 
-        String token = config.getString("bot_token");
+        String token = config.getBotToken();
         if (token != null && !token.isEmpty()) {
             try {
                 Utils.put(
-                        "https://discord.com/api/guilds/"
-                                + config.get("guild_id")
-                                + "/members/"
-                                + id,
+                        "https://discord.com/api/guilds/" + config.getGuildId() + "/members/" + id,
                         Map.of("access_token", accessToken));
             } catch (InterruptedException e) {
                 // NO-OP

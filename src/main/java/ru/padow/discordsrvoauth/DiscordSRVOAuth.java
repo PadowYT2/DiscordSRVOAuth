@@ -21,12 +21,9 @@ package ru.padow.discordsrvoauth;
 import com.sun.net.httpserver.HttpServer;
 import com.tcoded.folialib.FoliaLib;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.toml.TomlJacksonConfigurer;
+import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.objects.managers.AccountLinkManager;
@@ -49,7 +46,6 @@ import ru.padow.discordsrvoauth.routes.CallbackHandler;
 import ru.padow.discordsrvoauth.routes.LinkHandler;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +57,7 @@ import java.util.logging.Logger;
 public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     @Getter
     @Accessors(fluent = true)
-    private static YamlDocument config;
+    private static Config config;
 
     private FoliaLib foliaLib;
     private HttpServer server;
@@ -73,26 +69,47 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
         Logger logger = getLogger();
         foliaLib = new FoliaLib(this);
 
+        File toml = new File(getDataFolder(), "config.toml");
+        File yaml = new File(getDataFolder(), "config.yml");
+
+        if (yaml.exists() && !toml.exists()) {
+            try {
+                Config config =
+                        ConfigManager.create(
+                                Config.class,
+                                (it) -> {
+                                    it.withConfigurer(new YamlBukkitConfigurer());
+                                    it.withBindFile(yaml);
+                                    it.load();
+                                });
+
+                config.withConfigurer(new TomlJacksonConfigurer());
+                config.withBindFile(toml);
+                config.save();
+
+                yaml.renameTo(new File(getDataFolder(), "config.yml.old"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             config =
-                    YamlDocument.create(
-                            new File(getDataFolder(), "config.yml"),
-                            getResource("config.yml"),
-                            GeneralSettings.DEFAULT,
-                            LoaderSettings.builder().setAutoUpdate(true).build(),
-                            DumperSettings.DEFAULT,
-                            UpdaterSettings.builder()
-                                    .setVersioning(new BasicVersioning("version"))
-                                    .build());
-
-            if (config.getInt("version") == null) config.update();
-        } catch (IOException e) {
+                    ConfigManager.create(
+                            Config.class,
+                            (it) -> {
+                                it.withConfigurer(new TomlJacksonConfigurer());
+                                it.withBindFile(toml);
+                                it.saveDefaults();
+                                it.load(true);
+                            });
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         foliaLib.getScheduler().runAsync(task -> startServer());
 
-        if (config.getBoolean("bstats")) new Metrics(this, 22358);
+        if (config.isBstats()) new Metrics(this, 22358);
 
         try {
             Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
@@ -152,11 +169,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                     && sender.hasPermission("discordsrvoauth.reload")) {
                 if (server != null) server.stop(1);
 
-                try {
-                    config.reload();
-                } catch (IOException e) {
-                    getLogger().severe(e.getMessage());
-                }
+                config.load();
 
                 foliaLib.getScheduler().runAsync(task -> startServer());
 
@@ -192,10 +205,10 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
         if (discordId == null) {
             String code = accountLinkManager.generateCode(playerUuid);
-            String route = "/" + config.getString("link_route") + "?code=" + code;
+            String route = "/" + config.getLinkRoute() + "?code=" + code;
 
             String kickMessage =
-                    config.getString("kick_message")
+                    config.getKickMessage()
                             .replaceAll("&", "§")
                             .replace("{JOIN}", Utils.getBaseURL(config, true) + route)
                             .replace("{KICK}", Utils.getBaseURL(config, false) + route);
@@ -215,26 +228,26 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     private void startServer() {
         stopServer();
 
-        if (config.getBoolean("disable_webserver")) return;
+        if (config.isDisableWebserver()) return;
 
         try {
             System.setProperty("sun.net.httpserver.maxReqTime", "10000");
             System.setProperty("sun.net.httpserver.maxRspTime", "10000");
 
-            server = HttpServer.create(new InetSocketAddress("0.0.0.0", config.getInt("port")), 50);
+            server = HttpServer.create(new InetSocketAddress("0.0.0.0", config.getPort()), 50);
             server.createContext(
                     "/",
                     exchange -> {
                         exchange.sendResponseHeaders(404, -1);
                         exchange.close();
                     });
-            server.createContext("/" + config.getString("link_route"), new LinkHandler());
+            server.createContext("/" + config.getLinkRoute(), new LinkHandler());
             server.createContext("/callback", new CallbackHandler());
 
             executor = Executors.newCachedThreadPool();
             server.setExecutor(executor);
             server.start();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

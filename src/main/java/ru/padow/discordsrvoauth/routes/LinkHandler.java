@@ -21,10 +21,9 @@ package ru.padow.discordsrvoauth.routes;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-
 import github.scarsz.discordsrv.DiscordSRV;
 
+import ru.padow.discordsrvoauth.Config;
 import ru.padow.discordsrvoauth.DiscordSRVOAuth;
 import ru.padow.discordsrvoauth.Utils;
 
@@ -33,7 +32,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class LinkHandler implements HttpHandler {
-    private YamlDocument config = DiscordSRVOAuth.config();
+    private Config config = DiscordSRVOAuth.config();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -58,11 +57,11 @@ public class LinkHandler implements HttpHandler {
             return;
         }
 
-        String token = config.getString("bot_token");
+        String token = config.getBotToken();
         String redirect_uri = Utils.getBaseURL(config, true) + "/callback";
         String url =
                 "https://discord.com/api/oauth2/authorize?client_id="
-                        + config.getString("client_id")
+                        + config.getClientId()
                         + "&redirect_uri="
                         + URLEncoder.encode(redirect_uri, StandardCharsets.UTF_8)
                         + "&response_type=code&scope=identify"

@@ -20,8 +20,6 @@ package ru.padow.discordsrvoauth;
 
 import com.google.gson.Gson;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -96,9 +94,9 @@ public class Utils {
                                 pair -> URLDecoder.decode(pair[1], StandardCharsets.UTF_8)));
     }
 
-    public static String getBaseURL(YamlDocument config, Boolean protocol) {
-        return (protocol ? (config.getBoolean("https") ? "https://" : "http://") : "")
-                + config.getString("url")
-                + (config.getBoolean("https") ? "" : ":" + config.getInt("port"));
+    public static String getBaseURL(Config config, Boolean protocol) {
+        return (protocol ? (config.isHttps() ? "https://" : "http://") : "")
+                + config.getUrl()
+                + (config.isHttps() ? "" : ":" + config.getPort());
     }
 }

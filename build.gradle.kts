@@ -24,7 +24,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://nexus.scarsz.me/content/groups/public/")
     maven("https://repo.tcoded.com/releases")
-    maven("https://jitpack.io")
+    maven("https://repo.okaeri.cloud/releases")
 }
 
 dependencies {
@@ -33,8 +33,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("dev.dejvokep:boosted-yaml:1.3.5")
-    implementation("dev.dejvokep:boosted-yaml-spigot:1.5")
+    implementation("eu.okaeri:okaeri-configs-yaml-bukkit:6.0.0-beta.27")
+    implementation("eu.okaeri:okaeri-configs-toml-jackson:6.0.0-beta.27")
     implementation("com.tcoded:FoliaLib:0.5.1")
 }
 
@@ -54,11 +54,12 @@ tasks {
         archiveClassifier.set("")
 
         relocate("org.bstats", "ru.padow.discordsrvoauth.relocated.bstats")
-        relocate("dev.dejvokep.boostedyaml", "ru.padow.discordsrvoauth.relocated.boostedyaml")
+        relocate("eu.okaeri", "ru.padow.discordsrvoauth.relocated.okaeri")
+        relocate("com.fasterxml", "ru.padow.discordsrvoauth.relocated.fasterxml")
         relocate("com.tcoded.folialib", "ru.padow.discordsrvoauth.relocated.folialib")
 
-        exclude("LICENSE")
-        exclude("META-INF/versions/**")
-        exclude("META-INF/maven/**")
+        exclude("META-INF/**")
+
+        minimize()
     }
 }
