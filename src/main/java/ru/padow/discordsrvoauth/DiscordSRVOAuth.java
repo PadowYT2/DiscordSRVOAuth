@@ -18,9 +18,9 @@
 
 package ru.padow.discordsrvoauth;
 
-import com.sun.net.httpserver.HttpServer;
 import com.cjcrafter.foliascheduler.FoliaCompatibility;
 import com.cjcrafter.foliascheduler.ServerImplementation;
+import com.sun.net.httpserver.HttpServer;
 
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.toml.TomlJacksonConfigurer;
@@ -75,7 +75,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
         if (yaml.exists() && !toml.exists()) {
             try {
-                Config config =
+                Config yamlConfig =
                         ConfigManager.create(
                                 Config.class,
                                 (it) -> {
@@ -84,8 +84,35 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                                     it.load();
                                 });
 
-                config.withConfigurer(new TomlJacksonConfigurer());
-                config.withBindFile(toml);
+                ConfigManager.create(
+                        Config.class,
+                        (it) -> {
+                            it.withConfigurer(new TomlJacksonConfigurer());
+                            it.withBindFile(toml);
+                            it.saveDefaults();
+                            it.load();
+                        });
+
+                config =
+                        ConfigManager.create(
+                                Config.class,
+                                (it) -> {
+                                    it.withConfigurer(new TomlJacksonConfigurer());
+                                    it.withBindFile(toml);
+                                    it.load();
+                                });
+
+                config.setHttps(yamlConfig.isHttps());
+                config.setUrl(yamlConfig.getUrl());
+                config.setPort(yamlConfig.getPort());
+                config.setLinkRoute(yamlConfig.getLinkRoute());
+                config.setKickMessage(yamlConfig.getKickMessage());
+                config.setClientId(yamlConfig.getClientId());
+                config.setClientSecret(yamlConfig.getClientSecret());
+                config.setBotToken(yamlConfig.getBotToken());
+                config.setGuildId(yamlConfig.getGuildId());
+                config.setDisableWebserver(yamlConfig.isDisableWebserver());
+                config.setBstats(yamlConfig.isBstats());
                 config.save();
 
                 yaml.renameTo(new File(getDataFolder(), "config.yml.old"));
@@ -106,6 +133,8 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                             });
         } catch (Exception e) {
             e.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         scheduler.async().runNow(() -> startServer());

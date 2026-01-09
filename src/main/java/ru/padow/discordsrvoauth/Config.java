@@ -33,47 +33,54 @@ public class Config extends OkaeriConfig {
     private String url = "example.com";
     private int port = 8082;
 
-    @Comment(
-            "This route will be used to use the Discord OAuth2 (ex."
-                    + " http://example.com:8080/link?code=xxxx)")
+    @Comment({
+        "",
+        "This route will be used to use the Discord OAuth2 (ex."
+                + " http://example.com:8080/link?code=xxxx)"
+    })
     private String linkRoute = "link";
 
     @Comment({
+        "",
         "MiniMessage will only work on PaperMC 1.18.2+ (https://webui.advntr.dev)",
         "On SpigotMC and/or Minecraft 1.18.1 and lower, legacy codes must be used",
-        "\nPlaceholders",
+        " ",
+        "Placeholders",
         "{JOIN} - {https}://{url}:{port}/{link_route}?code=xxxx",
         "{KICK} - {url}:{port}/{link_route}?code=xxxx",
         "{CODE} - the code",
         "{BOT} - Discord bot's name",
-        "\nYou can also use <click:open_url:'{JOIN}'>click here</click>",
+        " ",
+        "You can also use <click:open_url:'{JOIN}'>click here</click>",
         "if you are not getting kicked from the server on join (only with MiniMessage)"
     })
     private String kickMessage =
             "<gray>To play, you need to link your <color:#5865f2>Discord<gray> account.\n\n"
-                + "<gray>Please go to <green>{KICK} <gray>to link your account.\n\n"
-                + "<white>OR\n\n"
-                + "<gray>Message the <color:#5865f2>{BOT}<gray> bot directly with code:"
-                + " <yellow>{CODE}";
+                    + "<gray>Please go to <green>{KICK} <gray>to link your account.\n\n"
+                    + "<white>OR\n\n"
+                    + "<gray>Message the <color:#5865f2>{BOT}<gray> bot directly with code:"
+                    + " <yellow>{CODE}";
 
-    @Comment("You can find these values in your Discord application's settings")
-    private String clientId = "000000000000000000";
+    @Comment({"", "You can find these values in your Discord application's settings"})
+    private long clientId = 0L;
 
     private String clientSecret = "";
 
-    @Comment("If you want to have the user to join your guild, fill these values")
+    @Comment({"", "If you want to have the user to join your guild, fill these values"})
     private String botToken = "";
 
     private long guildId = 0L;
 
     @Comment({
+        "",
         "If you have DiscordSRVOAuth setup on an another server and you are",
         "actively syncing DiscordSRV users, you should disable the webserver"
     })
     private boolean disableWebserver = false;
 
+    @Comment("")
     private boolean bstats = true;
 
-    @Comment("!!! DO NOT EDIT THIS !!!")
+    @Comment({"", "!!! DO NOT EDIT THIS !!!"})
     private int version = 1;
 }

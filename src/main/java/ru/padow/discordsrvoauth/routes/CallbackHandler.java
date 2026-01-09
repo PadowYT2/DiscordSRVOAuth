@@ -70,7 +70,7 @@ public class CallbackHandler implements HttpHandler {
                             "https://discord.com/api/oauth2/token",
                             new HashMap<String, String>() {
                                 {
-                                    put("client_id", config.getClientId());
+                                    put("client_id", String.valueOf(config.getClientId()));
                                     put("client_secret", config.getClientSecret());
                                     put("grant_type", "authorization_code");
                                     put("code", code);
