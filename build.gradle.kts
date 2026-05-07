@@ -29,12 +29,12 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("com.discordsrv:discordsrv:1.29.0")
-    compileOnly("org.projectlombok:lombok:1.18.38")
-    annotationProcessor("org.projectlombok:lombok:1.18.38")
-    implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("eu.okaeri:okaeri-configs-yaml-bukkit:6.0.0-beta.27")
-    implementation("eu.okaeri:okaeri-configs-toml-jackson:6.0.0-beta.27")
+    compileOnly("com.discordsrv:discordsrv:1.30.5")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
+    implementation("org.bstats:bstats-bukkit:3.2.1")
+    implementation("eu.okaeri:okaeri-configs-yaml-bukkit:6.1.0-beta.4")
+    implementation("eu.okaeri:okaeri-configs-toml-jackson:6.1.0-beta.4")
     implementation("com.cjcrafter:foliascheduler:0.7.2")
 }
 
