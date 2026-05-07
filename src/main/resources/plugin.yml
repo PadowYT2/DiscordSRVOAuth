@@ -10,8 +10,14 @@ depend: [DiscordSRV]
 commands:
   discordsrvoauth:
     description: DiscordSRVOAuth commands
+  link:
+    description: get the link to connect Discord account
+    permission: discordsrvoauth.link
 
 permissions:
   discordsrvoauth.reload:
     description: whether the player can reload the configuration
     default: op
+  discordsrvoauth.link:
+    description: whether the player can use /link
+    default: true

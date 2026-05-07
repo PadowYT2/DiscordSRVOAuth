@@ -38,15 +38,18 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
@@ -162,6 +165,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("discordsrvoauth").setExecutor(this);
+        getCommand("link").setExecutor(this);
     }
 
     @Override
@@ -220,6 +224,44 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
             }
         }
 
+        if (cmd.getName().equalsIgnoreCase("link")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("§cThis command can only be used by players.");
+                return true;
+            }
+
+            Player player = (Player) sender;
+
+            AccountLinkManager accountLinkManager = DiscordSRV.getPlugin().getAccountLinkManager();
+            if (accountLinkManager == null) {
+                player.sendMessage(
+                        DiscordSRV.config()
+                                .getString(
+                                        "Require linked account to play.Messages.DiscordSRV still"
+                                                + " starting")
+                                .replaceAll("&", "§"));
+                return true;
+            }
+
+            if (accountLinkManager.getDiscordIdBypassCache(player.getUniqueId()) != null) {
+                player.sendMessage(
+                        DiscordSRV.config()
+                                .getString("MinecraftAccountAlreadyLinked")
+                                .replaceAll("&", "§"));
+                return true;
+            }
+
+            String message = makeLinkMessage(player.getUniqueId(), accountLinkManager);
+            try {
+                Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
+                player.sendMessage(MiniMessage.miniMessage().deserialize(message));
+            } catch (Exception e) {
+                player.sendMessage(message);
+            }
+
+            return true;
+        }
+
         return false;
     }
 
@@ -237,41 +279,111 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
 
     @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = true)
-    public void onPlayerJoin(AsyncPlayerPreLoginEvent event) {
+    public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        if (!DiscordSRV.config().getBoolean("Require linked account to play.Enabled")) return;
+
         AccountLinkManager accountLinkManager = DiscordSRV.getPlugin().getAccountLinkManager();
         if (accountLinkManager == null) return;
 
-        UUID playerUuid = event.getUniqueId();
-        String discordId = accountLinkManager.getDiscordIdBypassCache(playerUuid);
+        if (bypassLinkCheck(event.getName(), event.getUniqueId(), event.getAddress())) return;
 
-        if (discordId == null) {
-            String code = accountLinkManager.generateCode(playerUuid);
-            String route = "/" + config.getLinkRoute() + "?code=" + code;
+        if (!DiscordSRV.isReady) {
+            event.disallow(
+                    AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
+                    DiscordSRV.config()
+                            .getString(
+                                    "Require linked account to play.Messages.DiscordSRV still"
+                                            + " starting")
+                            .replaceAll("&", "§"));
+            return;
+        }
 
-            String botName = "Discord Bot";
-            try {
-                botName = DiscordSRV.getPlugin().getMainGuild().getSelfMember().getEffectiveName();
-            } catch (Exception ignored) {
-            }
-
-            String kickMessage =
-                    config.getKickMessage()
-                            .replaceAll("&", "§")
-                            .replace("{JOIN}", Utils.getBaseURL(config, true) + route)
-                            .replace("{KICK}", Utils.getBaseURL(config, false) + route)
-                            .replace("{CODE}", code)
-                            .replace("{BOT}", botName);
-
+        if (accountLinkManager.getDiscordIdBypassCache(event.getUniqueId()) == null) {
+            String message = makeLinkMessage(event.getUniqueId(), accountLinkManager);
             try {
                 Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
-
                 event.disallow(
                         AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
-                        MiniMessage.miniMessage().deserialize(kickMessage));
+                        MiniMessage.miniMessage().deserialize(message));
             } catch (Exception e) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, kickMessage);
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, message);
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (DiscordSRV.config().getBoolean("Require linked account to play.Enabled")) return;
+
+        AccountLinkManager accountLinkManager = DiscordSRV.getPlugin().getAccountLinkManager();
+        if (accountLinkManager == null) return;
+
+        Player player = event.getPlayer();
+
+        if (bypassLinkCheck(
+                player.getName(), player.getUniqueId(), player.getAddress().getAddress())) return;
+
+        if (accountLinkManager.getDiscordIdBypassCache(player.getUniqueId()) == null) {
+            String message = makeLinkMessage(player.getUniqueId(), accountLinkManager);
+            try {
+                Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
+                player.sendMessage(MiniMessage.miniMessage().deserialize(message));
+            } catch (Exception e) {
+                player.sendMessage(message);
+            }
+        }
+    }
+
+    private boolean bypassLinkCheck(String playerName, UUID playerUuid, InetAddress address) {
+        if (DiscordSRV.config()
+                .getStringList("Require linked account to play.Bypass names")
+                .contains(playerName)) return true;
+
+        if (DiscordSRV.config()
+                .getBoolean("Require linked account to play.Whitelisted players bypass check")) {
+            if (getServer().getWhitelistedPlayers().stream()
+                    .map(OfflinePlayer::getUniqueId)
+                    .anyMatch(playerUuid::equals)) {
+                return true;
+            }
+        }
+
+        boolean onlyCheckBanned =
+                DiscordSRV.config()
+                        .getBoolean("Require linked account to play.Only check banned players");
+
+        if (!DiscordSRV.config().getBoolean("Require linked account to play.Check banned players")
+                || onlyCheckBanned) {
+            boolean banned =
+                    getServer().getBannedPlayers().stream()
+                            .anyMatch(p -> p.getUniqueId().equals(playerUuid));
+
+            if (!banned)
+                banned =
+                        getServer().getIPBans().stream().anyMatch(address.getHostAddress()::equals);
+            if (!onlyCheckBanned && banned) return true;
+            if (onlyCheckBanned && !banned) return true;
+        }
+
+        return false;
+    }
+
+    private String makeLinkMessage(UUID playerUuid, AccountLinkManager accountLinkManager) {
+        String code = accountLinkManager.generateCode(playerUuid);
+        String route = "/" + config.getLinkRoute() + "?code=" + code;
+
+        String botName = "Discord Bot";
+        try {
+            botName = DiscordSRV.getPlugin().getMainGuild().getSelfMember().getEffectiveName();
+        } catch (Exception ignored) {
+        }
+
+        return config.getKickMessage()
+                .replaceAll("&", "§")
+                .replace("{JOIN}", Utils.getBaseURL(config, true) + route)
+                .replace("{KICK}", Utils.getBaseURL(config, false) + route)
+                .replace("{CODE}", code)
+                .replace("{BOT}", botName);
     }
 
     private void startServer() {
