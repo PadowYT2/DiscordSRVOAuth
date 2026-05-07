@@ -64,7 +64,6 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
     private HttpServer server;
     private ExecutorService executor;
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
         Logger logger = getLogger();
@@ -79,16 +78,22 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                         ConfigManager.create(
                                 Config.class,
                                 (it) -> {
-                                    it.withConfigurer(new YamlBukkitConfigurer());
-                                    it.withBindFile(yaml);
+                                    it.configure(
+                                            opt -> {
+                                                opt.configurer(new YamlBukkitConfigurer());
+                                                opt.bindFile(yaml);
+                                            });
                                     it.load();
                                 });
 
                 ConfigManager.create(
                         Config.class,
                         (it) -> {
-                            it.withConfigurer(new TomlJacksonConfigurer());
-                            it.withBindFile(toml);
+                            it.configure(
+                                    opt -> {
+                                        opt.configurer(new TomlJacksonConfigurer());
+                                        opt.bindFile(toml);
+                                    });
                             it.saveDefaults();
                             it.load();
                         });
@@ -97,8 +102,11 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                         ConfigManager.create(
                                 Config.class,
                                 (it) -> {
-                                    it.withConfigurer(new TomlJacksonConfigurer());
-                                    it.withBindFile(toml);
+                                    it.configure(
+                                            opt -> {
+                                                opt.configurer(new TomlJacksonConfigurer());
+                                                opt.bindFile(toml);
+                                            });
                                     it.load();
                                 });
 
@@ -126,8 +134,11 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                     ConfigManager.create(
                             Config.class,
                             (it) -> {
-                                it.withConfigurer(new TomlJacksonConfigurer());
-                                it.withBindFile(toml);
+                                it.configure(
+                                        opt -> {
+                                            opt.configurer(new TomlJacksonConfigurer());
+                                            opt.bindFile(toml);
+                                        });
                                 it.saveDefaults();
                                 it.load(true);
                             });
