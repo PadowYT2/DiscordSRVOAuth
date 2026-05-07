@@ -3,7 +3,7 @@ version: ${version}
 description: Allow players to link their Discord account via Discord OAuth2
 author: PadowYT2
 api-version: 1.13
-main: ru.padow.discordsrvoauth.DiscordSRVOAuth
+main: dev.padow.discordsrvoauth.DiscordSRVOAuth
 folia-supported: true
 depend: [DiscordSRV]
 

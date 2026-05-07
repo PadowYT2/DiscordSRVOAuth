@@ -4,7 +4,7 @@ plugins {
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
-group = "ru.padow"
+group = "dev.padow"
 version = "1.1.0"
 
 java {
@@ -53,10 +53,10 @@ tasks {
         mergeServiceFiles()
         archiveClassifier.set("")
 
-        relocate("org.bstats", "ru.padow.discordsrvoauth.relocated.bstats")
-        relocate("eu.okaeri", "ru.padow.discordsrvoauth.relocated.okaeri")
-        relocate("com.fasterxml", "ru.padow.discordsrvoauth.relocated.fasterxml")
-        relocate("com.cjcrafter.foliascheduler", "ru.padow.discordsrvoauth.relocated.foliascheduler")
+        relocate("org.bstats", "dev.padow.discordsrvoauth.relocated.bstats")
+        relocate("eu.okaeri", "dev.padow.discordsrvoauth.relocated.okaeri")
+        relocate("com.fasterxml", "dev.padow.discordsrvoauth.relocated.fasterxml")
+        relocate("com.cjcrafter.foliascheduler", "dev.padow.discordsrvoauth.relocated.foliascheduler")
 
         exclude("META-INF/**")
 

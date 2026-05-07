@@ -16,16 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ru.padow.discordsrvoauth.routes;
+package dev.padow.discordsrvoauth.routes;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import github.scarsz.discordsrv.DiscordSRV;
+import dev.padow.discordsrvoauth.Config;
+import dev.padow.discordsrvoauth.DiscordSRVOAuth;
+import dev.padow.discordsrvoauth.Utils;
 
-import ru.padow.discordsrvoauth.Config;
-import ru.padow.discordsrvoauth.DiscordSRVOAuth;
-import ru.padow.discordsrvoauth.Utils;
+import github.scarsz.discordsrv.DiscordSRV;
 
 import java.io.IOException;
 import java.net.URLEncoder;

@@ -16,11 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ru.padow.discordsrvoauth;
+package dev.padow.discordsrvoauth;
 
 import com.cjcrafter.foliascheduler.FoliaCompatibility;
 import com.cjcrafter.foliascheduler.ServerImplementation;
 import com.sun.net.httpserver.HttpServer;
+
+import dev.padow.discordsrvoauth.routes.CallbackHandler;
+import dev.padow.discordsrvoauth.routes.LinkHandler;
 
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.toml.TomlJacksonConfigurer;
@@ -42,9 +45,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import ru.padow.discordsrvoauth.routes.CallbackHandler;
-import ru.padow.discordsrvoauth.routes.LinkHandler;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -174,7 +174,7 @@ public class DiscordSRVOAuth extends JavaPlugin implements Listener {
                                         + getDescription().getVersion(),
                                 "  <color:#193f62>█<color:#c29e84>█<color:#ae8f79>█<color:#c9a68c>█<color:#fbbc94>█<color:#fbbc94>█<color:#c9a68b>█<color:#1d4a72>█"
                                     + "       <green>Made by"
-                                    + " <click:open_url:'https://padow.ru'><color:#256091>PadowYT2</click>",
+                                    + " <click:open_url:'https://padow.dev'><color:#256091>PadowYT2</click>",
                                 "  <color:#c9a68b>█<color:#fbbc94>█<color:#fbbc94>█<color:#febb92>█<color:#febb92>█<color:#ffb991>█<color:#ffb991>█<color:#c9a68b>█",
                                 "  <color:#ffb990>█<color:#ffb991>█<color:#a67044>█<color:#242424>█<color:#333332>█<color:#a67044>█<color:#ffb991>█<color:#ffb991>█",
                                 "  <color:#ffb584>█<color:#ffb990>█<color:#ffc197>█<color:#f87e70>█<color:#fa9589>█<color:#ffc197>█<color:#ffb990>█<color:#ffb584>█");
