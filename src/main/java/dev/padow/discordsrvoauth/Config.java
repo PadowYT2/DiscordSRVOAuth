@@ -62,14 +62,14 @@ public class Config extends OkaeriConfig {
                     + " <yellow>{CODE}";
 
     @Comment({"", "You can find these values in your Discord application's settings"})
-    private long clientId = 0L;
+    private String clientId = "";
 
     private String clientSecret = "";
 
     @Comment({"", "If you want to have the user to join your guild, fill these values"})
     private String botToken = "";
 
-    private long guildId = 0L;
+    private String guildId = "";
 
     @Comment({
         "",
